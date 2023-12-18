@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { View, Text, TextInput, Button } from "react-native";
 import useCustomTextInput from "../../../hooks/useCustomTextInput";
-import CustomTextInput from "../../../components/TextInput";
+import CustomTextInput from "../../../components/CustomTextInput";
 import { signUpRequest } from "../../../functions/requests";
 
 export default function SignUp() {

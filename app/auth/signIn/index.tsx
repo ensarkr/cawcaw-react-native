@@ -1,17 +1,13 @@
-import { useContext, useState } from "react";
-import { View, Text, TextInput, Button } from "react-native";
+import { useState } from "react";
+import { View, Text, Button } from "react-native";
 import useCustomTextInput from "../../../hooks/useCustomTextInput";
-import CustomTextInput from "../../../components/TextInput";
-import { signInRequest, signUpRequest } from "../../../functions/requests";
-
-import * as SecureStorage from "expo-secure-store";
+import CustomTextInput from "../../../components/CustomTextInput";
+import { signInRequest } from "../../../functions/requests";
 import useAuth from "../../../context/useAuth";
 
 export default function SignIn() {
-  const displayName = useCustomTextInput("display name", false);
   const username = useCustomTextInput("username", false);
   const password = useCustomTextInput("password", true);
-  const rePassword = useCustomTextInput("repeat password", true);
 
   const [formError, setFormError] = useState<null | string>(null);
   const [isLoading, setIsLoading] = useState(false);

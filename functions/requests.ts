@@ -1,5 +1,25 @@
 import { doubleReturn } from "../typings/global";
-import { signInResponseBody, signUpResponseBody } from "../typings/http";
+import {
+  getPostsResponse,
+  signInResponseBody,
+  signUpResponseBody,
+} from "../typings/http";
+
+function returnURLWithQueries(url: string, queryObject: Record<string, any>) {
+  const keys = Object.keys(queryObject);
+
+  url += "?";
+
+  for (let i = 0; i < keys.length; i++) {
+    if (i != 0) {
+      url += "&";
+    }
+
+    url += keys[i] + "=" + encodeURIComponent(queryObject[keys[i]]);
+  }
+
+  return url;
+}
 
 async function signUpRequest({
   displayName,
@@ -69,4 +89,28 @@ async function signInRequest({
   }
 }
 
-export { signUpRequest, signInRequest };
+async function explorePostsRequest(
+  page: number,
+  endDate: Date
+): Promise<getPostsResponse> {
+  try {
+    const res = await fetch(
+      returnURLWithQueries(
+        (process.env.EXPO_PUBLIC_API_URL as string) + "/data/posts/explore",
+        { page, endDate }
+      ),
+      {
+        method: "GET",
+      }
+    );
+
+    const data = await res.json();
+
+    return data;
+  } catch (e) {
+    console.log(JSON.stringify(e));
+    return { status: false, message: (e as Error).message };
+  }
+}
+
+export { signUpRequest, signInRequest, explorePostsRequest };

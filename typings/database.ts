@@ -29,9 +29,4 @@ type post = {
   insertedAt: Date;
 };
 
-export {
-  user,
-  userPartial,
-  postComment,
-  post,
-};
+export { user, userPartial, postComment, post };
