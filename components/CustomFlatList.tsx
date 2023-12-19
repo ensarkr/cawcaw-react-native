@@ -4,6 +4,7 @@ import { doubleReturn } from "../typings/global";
 import {
   FlatList,
   FlatListProps,
+  VirtualizedList,
   ListRenderItem,
   Text,
   View,
@@ -70,9 +71,21 @@ export default function CustomFlatList({
   const [refreshing, setRefreshing] = useState(true);
   const [items, setItems] = useState<(post | postComment | userPartial)[]>([]);
   const auth = useAuth();
+  const fetchQueueRef = useRef<boolean[]>([]);
+  const fetchInProcessRef = useRef<boolean>(false);
 
   const setItemsOperation = async (reset: boolean) => {
+    if (fetchInProcessRef.current === true) {
+      fetchQueueRef.current.push(reset);
+      return;
+    }
+    fetchInProcessRef.current = true;
+
     if (isAllPagesFinishedRef.current && !reset) {
+      fetchInProcessRef.current = false;
+      if (fetchQueueRef.current.length !== 0) {
+        setItemsOperation(fetchQueueRef.current.shift() as boolean);
+      }
       return;
     }
 
@@ -117,6 +130,10 @@ export default function CustomFlatList({
     }
 
     setRefreshing(false);
+    fetchInProcessRef.current = false;
+    if (fetchQueueRef.current.length !== 0) {
+      setItemsOperation(fetchQueueRef.current.shift() as boolean);
+    }
   };
 
   useEffect(() => {
@@ -129,14 +146,18 @@ export default function CustomFlatList({
 
   return (
     <>
-      <FlatList
+      <VirtualizedList
         contentContainerStyle={style}
         refreshing={refreshing}
         onRefresh={() => setItemsOperation(true)}
         style={{ flex: 1 }}
         data={items}
+        getItem={(data, index) => data[index]}
+        getItemCount={(data) => data.length}
         renderItem={({ item }) => renderItem(item as any)}
-        onEndReached={async () => await setItemsOperation(false)}
+        onEndReached={async () => {
+          await setItemsOperation(false);
+        }}
         onEndReachedThreshold={0.5}
         ListHeaderComponent={
           firstRenderAlways
