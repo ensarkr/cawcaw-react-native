@@ -11,6 +11,7 @@ import {
   ToastAndroid,
   StyleProp,
   ViewStyle,
+  StyleSheet,
 } from "react-native";
 import { explorePostsRequest } from "../functions/requests";
 import {
@@ -19,8 +20,9 @@ import {
   getUsersResponse,
 } from "../typings/http";
 import useAuth from "../context/useAuth";
+import WhiteText from "./WhiteText";
 
-type CustomFlatListSameProps = {
+type CustomListSameProps = {
   noItemError?: string;
   firstElement?: React.ReactElement;
   lastElement?: React.ReactElement;
@@ -30,7 +32,7 @@ type CustomFlatListSameProps = {
   style?: StyleProp<ViewStyle>;
 };
 
-type CustomFlatListProps = (
+type CustomListProps = (
   | {
       type: "posts";
       fetchFunction: (page: number, endPage: Date) => Promise<getPostsResponse>;
@@ -50,9 +52,9 @@ type CustomFlatListProps = (
       renderItem: (postComment: postComment) => React.ReactElement;
     }
 ) &
-  CustomFlatListSameProps;
+  CustomListSameProps;
 
-export default function CustomFlatList({
+export default function CustomList({
   type,
   fetchFunction,
   renderItem,
@@ -63,7 +65,7 @@ export default function CustomFlatList({
   lastRenderAlways = false,
   refetchWhenAuthChanges = true,
   style,
-}: CustomFlatListProps) {
+}: CustomListProps) {
   const pageRef = useRef(0);
   const endDateRef = useRef(new Date(Date.now()));
   const pageCountRef = useRef<number | null>(null);
@@ -147,7 +149,7 @@ export default function CustomFlatList({
   return (
     <>
       <VirtualizedList
-        contentContainerStyle={style}
+        contentContainerStyle={[style, styles.list]}
         refreshing={refreshing}
         onRefresh={() => setItemsOperation(true)}
         style={{ flex: 1 }}
@@ -159,17 +161,11 @@ export default function CustomFlatList({
           setItemsOperation(false);
         }}
         onEndReachedThreshold={0.5}
-        ListHeaderComponent={
-          firstRenderAlways
-            ? firstElement
-            : items.length > 0
-            ? firstElement
-            : undefined
-        }
+        ListHeaderComponent={firstElement}
         ListFooterComponent={
           lastRenderAlways
             ? lastElement
-            : items.length > 0 && !refreshing
+            : items.length > 0 && isAllPagesFinishedRef.current === true
             ? lastElement
             : undefined
         }
@@ -177,8 +173,10 @@ export default function CustomFlatList({
           refreshing ? (
             <></>
           ) : (
-            <View>
-              <Text>{noItemError || "No item can be found."}</Text>
+            <View style={styles.lastElement}>
+              <WhiteText>
+                {noItemError || "No " + type + " can be found."}
+              </WhiteText>
             </View>
           )
         }
@@ -186,3 +184,14 @@ export default function CustomFlatList({
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  list: {
+    minHeight: "100%",
+  },
+  lastElement: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
