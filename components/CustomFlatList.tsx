@@ -1,13 +1,23 @@
 import { ReactElement, useEffect, useRef, useState } from "react";
 import { post, postComment, user, userPartial } from "../typings/database";
 import { doubleReturn } from "../typings/global";
-import { FlatList, ListRenderItem, Text, View } from "react-native";
+import {
+  FlatList,
+  FlatListProps,
+  ListRenderItem,
+  Text,
+  View,
+  ToastAndroid,
+  StyleProp,
+  ViewStyle,
+} from "react-native";
 import { explorePostsRequest } from "../functions/requests";
 import {
   getCommentsResponse,
   getPostsResponse,
   getUsersResponse,
 } from "../typings/http";
+import useAuth from "../context/useAuth";
 
 type CustomFlatListSameProps = {
   noItemError?: string;
@@ -15,6 +25,8 @@ type CustomFlatListSameProps = {
   lastElement?: React.ReactElement;
   firstRenderAlways?: boolean;
   lastRenderAlways?: boolean;
+  refetchWhenAuthChanges?: boolean;
+  style?: StyleProp<ViewStyle>;
 };
 
 type CustomFlatListProps = (
@@ -48,6 +60,8 @@ export default function CustomFlatList({
   noItemError,
   firstRenderAlways = false,
   lastRenderAlways = false,
+  refetchWhenAuthChanges = true,
+  style,
 }: CustomFlatListProps) {
   const pageRef = useRef(0);
   const endDateRef = useRef(new Date(Date.now()));
@@ -55,6 +69,7 @@ export default function CustomFlatList({
   const isAllPagesFinishedRef = useRef(false);
   const [refreshing, setRefreshing] = useState(true);
   const [items, setItems] = useState<(post | postComment | userPartial)[]>([]);
+  const auth = useAuth();
 
   const setItemsOperation = async (reset: boolean) => {
     if (isAllPagesFinishedRef.current && !reset) {
@@ -96,6 +111,8 @@ export default function CustomFlatList({
     } else {
       if (res.message.includes("Page")) {
         isAllPagesFinishedRef.current = true;
+      } else {
+        ToastAndroid.show(res.message, 250);
       }
     }
 
@@ -103,12 +120,17 @@ export default function CustomFlatList({
   };
 
   useEffect(() => {
-    setItemsOperation(false);
+    if (refetchWhenAuthChanges === false) setItemsOperation(true);
   }, []);
+
+  useEffect(() => {
+    if (refetchWhenAuthChanges === true) setItemsOperation(true);
+  }, [auth.user]);
 
   return (
     <>
       <FlatList
+        contentContainerStyle={style}
         refreshing={refreshing}
         onRefresh={() => setItemsOperation(true)}
         style={{ flex: 1 }}
