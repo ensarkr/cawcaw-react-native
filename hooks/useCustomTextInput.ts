@@ -15,6 +15,7 @@ export default function useCustomTextInput(
       secureTextEntry: isPassword,
     },
     errorMessage,
+    setValue,
     validate: () => {
       setErrorMessage(null);
       return checkEmptiness(value, uiName, setErrorMessage);

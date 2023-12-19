@@ -155,8 +155,8 @@ export default function CustomFlatList({
         getItem={(data, index) => data[index]}
         getItemCount={(data) => data.length}
         renderItem={({ item }) => renderItem(item as any)}
-        onEndReached={async () => {
-          await setItemsOperation(false);
+        onEndReached={() => {
+          setItemsOperation(false);
         }}
         onEndReachedThreshold={0.5}
         ListHeaderComponent={
