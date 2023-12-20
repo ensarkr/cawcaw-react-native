@@ -1,19 +1,13 @@
-import { ReactElement, useEffect, useRef, useState } from "react";
-import { post, postComment, user, userPartial } from "../typings/database";
-import { doubleReturn } from "../typings/global";
+import { useEffect, useRef, useState } from "react";
+import { post, postComment, userPartial } from "../typings/database";
 import {
-  FlatList,
-  FlatListProps,
   VirtualizedList,
-  ListRenderItem,
-  Text,
   View,
   ToastAndroid,
   StyleProp,
   ViewStyle,
   StyleSheet,
 } from "react-native";
-import { explorePostsRequest } from "../functions/requests";
 import {
   getCommentsResponse,
   getPostsResponse,
@@ -26,10 +20,10 @@ type CustomListSameProps = {
   noItemError?: string;
   firstElement?: React.ReactElement;
   lastElement?: React.ReactElement;
-  firstRenderAlways?: boolean;
   lastRenderAlways?: boolean;
   refetchWhenAuthChanges?: boolean;
   style?: StyleProp<ViewStyle>;
+  onRefresh?: () => void;
 };
 
 type CustomListProps = (
@@ -54,6 +48,8 @@ type CustomListProps = (
 ) &
   CustomListSameProps;
 
+const errorMarginMS = 200;
+
 export default function CustomList({
   type,
   fetchFunction,
@@ -61,13 +57,13 @@ export default function CustomList({
   firstElement,
   lastElement,
   noItemError,
-  firstRenderAlways = false,
   lastRenderAlways = false,
   refetchWhenAuthChanges = true,
   style,
+  onRefresh,
 }: CustomListProps) {
   const pageRef = useRef(0);
-  const endDateRef = useRef(new Date(Date.now()));
+  const endDateRef = useRef(new Date(Date.now() + errorMarginMS));
   const pageCountRef = useRef<number | null>(null);
   const isAllPagesFinishedRef = useRef(false);
   const [refreshing, setRefreshing] = useState(true);
@@ -97,10 +93,9 @@ export default function CustomList({
       isAllPagesFinishedRef.current = false;
       pageCountRef.current = null;
       pageRef.current = 0;
-      endDateRef.current = new Date(Date.now());
+      endDateRef.current = new Date(Date.now() + errorMarginMS);
     }
 
-    endDateRef.current = new Date(Date.now());
     const res = await fetchFunction(pageRef.current++, endDateRef.current);
 
     if (res.status) {
@@ -149,13 +144,18 @@ export default function CustomList({
   return (
     <>
       <VirtualizedList
+        ListHeaderComponentStyle={{ gap: 10 }}
         contentContainerStyle={[style, styles.list]}
         refreshing={refreshing}
-        onRefresh={() => setItemsOperation(true)}
+        onRefresh={async () => {
+          await setItemsOperation(true);
+          if (onRefresh) onRefresh();
+        }}
         style={{ flex: 1 }}
         data={items}
         getItem={(data, index) => data[index]}
         getItemCount={(data) => data.length}
+        keyExtractor={(data) => data.id}
         renderItem={({ item }) => renderItem(item as any)}
         onEndReached={() => {
           setItemsOperation(false);
