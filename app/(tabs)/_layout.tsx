@@ -9,8 +9,8 @@ export default function TabsLayout() {
         options={{ href: "/", title: "home" }}
       ></Tabs.Screen>
       <Tabs.Screen
-        name="explore/index"
-        options={{ href: "/explore", title: "explore" }}
+        name="following/index"
+        options={{ href: "/following", title: "following" }}
       ></Tabs.Screen>
       <Tabs.Screen
         name="search/index"

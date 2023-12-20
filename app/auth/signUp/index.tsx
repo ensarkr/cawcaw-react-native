@@ -5,10 +5,13 @@ import CustomTextInput from "../../../components/CustomTextInput";
 import { signUpRequest } from "../../../functions/requests";
 
 export default function SignUp() {
-  const displayName = useCustomTextInput("display name", false);
-  const username = useCustomTextInput("username", false);
-  const password = useCustomTextInput("password", true);
-  const rePassword = useCustomTextInput("repeat password", true);
+  const displayName = useCustomTextInput({ uiName: "display name" });
+  const username = useCustomTextInput({ uiName: "username" });
+  const password = useCustomTextInput({ uiName: "password", isPassword: true });
+  const rePassword = useCustomTextInput({
+    uiName: "repeat password",
+    isPassword: true,
+  });
 
   const [formError, setFormError] = useState<null | string>(null);
   const [isLoading, setIsLoading] = useState(false);

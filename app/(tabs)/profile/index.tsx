@@ -15,7 +15,7 @@ export default function Profile() {
       <Link href={"/auth/signIn"}>sign in</Link>
       <Link href={"/auth/signUp"}>sign up</Link>
 
-      {auth.user !== null ? (
+      {auth.user.status === "user" ? (
         <>
           <Text>id: {auth.user.id}</Text>
           <Text>display name: {auth.user.displayName}</Text>

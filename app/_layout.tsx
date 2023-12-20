@@ -13,6 +13,15 @@ export default function StackLayout() {
           name="(tabs)"
           options={{ headerShown: false }}
         ></Stack.Screen>
+        <Stack.Screen
+          name="post/[postId]"
+          options={{
+            title: "POST",
+            headerStyle: { backgroundColor: "black" },
+            headerTitleStyle: { color: "white" },
+            headerTintColor: "white",
+          }}
+        ></Stack.Screen>
       </Stack>
     </AuthProvider>
   );

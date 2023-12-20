@@ -1,5 +1,8 @@
 import { doubleReturn } from "../typings/global";
 import {
+  commentOnPostRequestBody,
+  getCommentsResponse,
+  getPostResponse,
   getPostsResponse,
   signInResponseBody,
   signUpResponseBody,
@@ -156,9 +159,135 @@ async function likeOrUnlikePostRequest(
   }
 }
 
+async function followingPostsRequest(
+  page: number,
+  endDate: Date
+): Promise<getPostsResponse> {
+  try {
+    const jwt_token = await SecureStorage.getItemAsync("jwt_token");
+
+    const res = await fetch(
+      returnURLWithQueries(
+        (process.env.EXPO_PUBLIC_API_URL as string) + "/data/posts/following",
+        { page, endDate }
+      ),
+      {
+        method: "GET",
+        headers:
+          jwt_token !== null
+            ? {
+                authorization: jwt_token,
+              }
+            : {},
+      }
+    );
+
+    const data = await res.json();
+
+    return data;
+  } catch (e) {
+    console.log(JSON.stringify(e));
+    return { status: false, message: (e as Error).message };
+  }
+}
+
+async function postRequest(postId: number): Promise<getPostResponse> {
+  try {
+    const jwt_token = await SecureStorage.getItemAsync("jwt_token");
+
+    const res = await fetch(
+      (process.env.EXPO_PUBLIC_API_URL as string) + "/data/post/" + postId,
+
+      {
+        method: "GET",
+        headers:
+          jwt_token !== null
+            ? {
+                authorization: jwt_token,
+              }
+            : {},
+      }
+    );
+
+    const data = await res.json();
+
+    return data;
+  } catch (e) {
+    console.log(JSON.stringify(e));
+    return { status: false, message: (e as Error).message };
+  }
+}
+
+async function addCommentRequest(
+  postId: number,
+  comment: string
+): Promise<doubleReturn<undefined>> {
+  try {
+    const jwt_token = await SecureStorage.getItemAsync("jwt_token");
+
+    if (jwt_token === null) {
+      return { status: false, message: "Not signed in." };
+    }
+
+    const res = await fetch(
+      (process.env.EXPO_PUBLIC_API_URL as string) + "/action/comment",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json; charset=utf-8",
+          authorization: jwt_token,
+        },
+        body: JSON.stringify({
+          postId,
+          comment,
+        } as commentOnPostRequestBody),
+      }
+    );
+
+    const data = await res.json();
+
+    return data;
+  } catch (e) {
+    console.log(JSON.stringify(e));
+    return { status: false, message: (e as Error).message };
+  }
+}
+
+async function postCommentsRequest(
+  postId: number,
+  page: number,
+  endDate: Date
+): Promise<getCommentsResponse> {
+  try {
+    const res = await fetch(
+      returnURLWithQueries(
+        (process.env.EXPO_PUBLIC_API_URL as string) +
+          "/data/post/" +
+          postId +
+          "/comments",
+        { page, endDate }
+      ),
+      {
+        method: "GET",
+      }
+    );
+
+    const data = await res.json();
+
+    return data;
+  } catch (e) {
+    console.log(JSON.stringify(e));
+    return { status: false, message: (e as Error).message };
+  }
+}
+
 export {
   signUpRequest,
   signInRequest,
   explorePostsRequest,
   likeOrUnlikePostRequest,
+  followingPostsRequest,
+  postRequest,
+  postCommentsRequest,
+  addCommentRequest,
 };

@@ -1,12 +1,17 @@
 import useCustomTextInput from "../hooks/useCustomTextInput";
-import { Text, TextInput } from "react-native";
+import { Text, TextInput, TextInputProps } from "react-native";
 
 export default function CustomTextInput(
-  props: ReturnType<typeof useCustomTextInput>
+  props: TextInputProps & ReturnType<typeof useCustomTextInput>
 ) {
   return (
     <>
-      <TextInput {...props.props}></TextInput>
+      <TextInput
+        {...props.props}
+        style={{ color: "white" }}
+        placeholderTextColor="white"
+        multiline
+      ></TextInput>
       {props.errorMessage !== null && <Text>{props.errorMessage}</Text>}
     </>
   );
