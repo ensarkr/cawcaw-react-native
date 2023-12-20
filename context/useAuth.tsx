@@ -3,19 +3,29 @@ import { user, userPartial } from "../typings/database";
 import * as SecureStorage from "expo-secure-store";
 import { decodeJWTPayload, expirationCheckJWTPayload } from "../functions/jwt";
 
-const AuthContext = createContext<userPartial | null>(null);
+const AuthContext = createContext<auth>({ status: "guest" });
 const SetAuthContext = createContext<React.Dispatch<
-  React.SetStateAction<userPartial | null>
+  React.SetStateAction<auth>
 > | null>(null);
 
+type auth =
+  | { status: "loading" }
+  | { status: "guest" }
+  | ({ status: "user" } & userPartial);
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [auth, setAuth] = useState<null | userPartial>(null);
+  const [auth, setAuth] = useState<auth>({ status: "loading" });
 
   useEffect(() => {
     const asyncOperation = async () => {
       const jwt_token = await SecureStorage.getItemAsync("jwt_token");
 
-      if (jwt_token === null) return;
+      if (jwt_token === null) {
+        setAuth({
+          status: "guest",
+        });
+        return;
+      }
 
       const payload = decodeJWTPayload(jwt_token);
 
@@ -25,6 +35,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       setAuth({
+        status: "user",
         id: payload.userId,
         username: payload.username,
         displayName: payload.displayName,
@@ -50,6 +61,7 @@ export default function useAuth() {
       await SecureStorage.setItemAsync("jwt_token", token);
 
       setUser({
+        status: "user",
         id: payload.userId,
         username: payload.username,
         displayName: payload.displayName,
@@ -59,7 +71,7 @@ export default function useAuth() {
 
   const signOut = async () => {
     await SecureStorage.deleteItemAsync("jwt_token");
-    if (setUser !== null) setUser(null);
+    if (setUser !== null) setUser({ status: "guest" });
   };
 
   return {
