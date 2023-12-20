@@ -56,6 +56,8 @@ type postComment_DB = {
   post_id: number;
   comment: string;
   inserted_at: dbDate;
+  username: string;
+  display_name: string;
 };
 
 type postComment = {
@@ -64,6 +66,8 @@ type postComment = {
   postId: number;
   comment: string;
   insertedAt: Date;
+  username: string;
+  displayName: string;
 };
 
 type post = {

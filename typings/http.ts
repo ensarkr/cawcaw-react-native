@@ -91,7 +91,7 @@ type commentOnPostResponseBody = doubleReturn<undefined> & action;
 
 // * GET
 
-type getPostsQuery = {
+type getPageQuery = {
   endDate: Date;
   page: number;
 };
@@ -102,11 +102,11 @@ type getPostsResponse = doubleReturn<{
 }> &
   action;
 
-type searchPostsQuery = { searchQuery: string } & getPostsQuery;
+type searchPostsQuery = { searchQuery: string } & getPageQuery;
 
 type searchUsersQuery = {
   searchQuery: string;
-} & getPostsQuery;
+} & getPageQuery;
 
 type getUsersResponse = doubleReturn<{
   users: userPartial[];
@@ -115,6 +115,7 @@ type getUsersResponse = doubleReturn<{
   action;
 
 type getUserResponse = doubleReturn<user> & action;
+type getPostResponse = doubleReturn<post> & action;
 
 type getCommentsResponse = doubleReturn<{
   comments: postComment[];
@@ -146,11 +147,12 @@ export {
   unlikePostResponseBody,
   commentOnPostRequestBody,
   commentOnPostResponseBody,
-  getPostsQuery,
+  getPageQuery,
   getPostsResponse,
   searchPostsQuery,
   searchUsersQuery,
   getUsersResponse,
   getUserResponse,
   getCommentsResponse,
+  getPostResponse,
 };
