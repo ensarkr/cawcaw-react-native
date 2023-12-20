@@ -37,7 +37,7 @@ export default function AddComment({
 
   const handleSubmit = async () => {
     if (auth.user.status !== "user") {
-      ToastAndroid.show("User not signed in", 200);
+      ToastAndroid.show("You have to sign in to comment.", 200);
       return;
     }
 
