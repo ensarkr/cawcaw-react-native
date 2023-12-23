@@ -1,20 +1,10 @@
-import { Link, router } from "expo-router";
-import { post } from "../typings/database";
-import {
-  Text,
-  View,
-  StyleSheet,
-  Image,
-  Pressable,
-  ToastAndroid,
-  Button,
-} from "react-native";
-import { useState } from "react";
+import { View, StyleSheet, Image, Pressable, ToastAndroid } from "react-native";
 import useAuth from "../context/useAuth";
 import { addCommentRequest } from "../functions/requests";
 import WhiteText from "./WhiteText";
 import CustomTextInput from "./CustomTextInput";
 import useCustomTextInput from "../hooks/useCustomTextInput";
+import { useState } from "react";
 
 export default function AddComment({
   postId,
@@ -34,12 +24,17 @@ export default function AddComment({
     placeholder: "Click to write your comment",
     limit: 150,
   });
+  const [isUploading, setIsUploading] = useState(false);
+
+  const isSubmitDisabled =
+    isUploading || comment.props.value.trim().length === 0;
 
   const handleSubmit = async () => {
     if (auth.user.status !== "user") {
       ToastAndroid.show("You have to sign in to comment.", 200);
       return;
     }
+    setIsUploading(true);
 
     const res = await addCommentRequest(postId, comment.props.value);
 
@@ -53,25 +48,23 @@ export default function AddComment({
       );
     } else {
       ToastAndroid.show(res.message, 200);
-      return;
     }
+
+    setIsUploading(false);
   };
 
   return (
     <>
-      <View style={styles.view}>
+      <View style={[styles.view, isUploading ? { opacity: 0.5 } : {}]}>
         <CustomTextInput {...comment}></CustomTextInput>
 
         <View style={styles.infoView}>
           <WhiteText style={styles.fade}>
             {comment.props.value.length}/150
           </WhiteText>
-          <Pressable
-            disabled={comment.props.value.trim().length === 0}
-            onPress={handleSubmit}
-          >
+          <Pressable disabled={isSubmitDisabled} onPress={handleSubmit}>
             <Image
-              style={styles.icon}
+              style={[styles.icon, isSubmitDisabled ? { opacity: 0.5 } : {}]}
               source={require("../assets/send-solid-24.png")}
             ></Image>
           </Pressable>
@@ -96,11 +89,14 @@ const styles = StyleSheet.create({
     width: 30,
     objectFit: "contain",
     alignSelf: "flex-end",
+    marginRight: 40,
   },
   infoView: {
     flexDirection: "row",
-    justifyContent: "flex-end",
-    gap: 25,
+    justifyContent: "space-between",
+    alignItems: "center",
+    alignSelf: "flex-end",
+    width: 160,
   },
   fade: {
     opacity: 0.8,

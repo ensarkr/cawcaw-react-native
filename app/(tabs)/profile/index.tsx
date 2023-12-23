@@ -4,7 +4,7 @@ import { Button, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import useAuth from "../../../context/useAuth";
 
-export default function Profile() {
+export default function ProfilePage() {
   const safeArea = useSafeAreaInsets();
 
   const auth = useAuth();

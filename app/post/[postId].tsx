@@ -2,22 +2,24 @@ import { Link, router, useLocalSearchParams } from "expo-router";
 import { Button, Text, View, StyleSheet, ToastAndroid } from "react-native";
 import useAuth from "../../context/useAuth";
 import Post from "../../components/Post";
-import { useEffect, useState } from "react";
-import { postCommentsRequest, postRequest } from "../../functions/requests";
+import { memo, useEffect, useState } from "react";
+import { getPostCommentsRequest, getPostRequest } from "../../functions/requests";
 import { post, postComment } from "../../typings/database";
 import CustomList from "../../components/CustomList";
 import WhiteText from "../../components/WhiteText";
-import useComment from "../../hooks/useComments";
+import useNewUserComments from "../../hooks/useNewUserComments";
 import Comment from "../../components/Comment";
+
+const Comment_Memo = memo(Comment);
 
 export default function PostPage() {
   const { postId } = useLocalSearchParams();
   const [postData, setPostData] = useState<post | null>(null);
   const auth = useAuth();
-  const comment = useComment(parseInt(postId as string));
+  const newUserCommentsHook = useNewUserComments(parseInt(postId as string));
 
-  const asyncOperation = async () => {
-    const res = await postRequest(parseInt(postId as string));
+  const getAndSetPostData = async () => {
+    const res = await getPostRequest(parseInt(postId as string));
 
     if (res.status) {
       setPostData(res.value);
@@ -28,7 +30,7 @@ export default function PostPage() {
   };
 
   useEffect(() => {
-    asyncOperation();
+    getAndSetPostData();
   }, [auth.user.status]);
 
   return (
@@ -41,20 +43,22 @@ export default function PostPage() {
             <Post
               type="postWithComments"
               post={postData}
-              addNewUserComment={comment.addNewUserComment}
-              userComments={comment.userComments}
+              addNewUserComment={newUserCommentsHook.addNewUserComment}
+              userComments={newUserCommentsHook.userComments}
             ></Post>
           ) : (
             <></>
           )
         }
         fetchFunction={(page, endPage) =>
-          postCommentsRequest(parseInt(postId as string), page, endPage)
+          getPostCommentsRequest(parseInt(postId as string), page, endPage)
         }
-        renderItem={(comment) => <Comment comment={comment}></Comment>}
+        renderItem={(comment) => (
+          <Comment_Memo comment={comment}></Comment_Memo>
+        )}
         onRefresh={() => {
-          asyncOperation();
-          comment.clearUserComments();
+          getAndSetPostData();
+          newUserCommentsHook.clearUserComments();
         }}
         lastElement={
           <View style={styles.lastElement}>

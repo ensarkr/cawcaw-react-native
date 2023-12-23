@@ -8,7 +8,10 @@ export default function CustomTextInput(
     <>
       <TextInput
         {...props.props}
-        style={{ color: "white" }}
+        style={[
+          { color: "white" },
+          props.props.value.length === 0 ? { opacity: 0.8 } : {},
+        ]}
         placeholderTextColor="white"
         multiline
       ></TextInput>

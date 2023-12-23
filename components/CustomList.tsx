@@ -48,7 +48,7 @@ type CustomListProps = (
 ) &
   CustomListSameProps;
 
-const errorMarginMS = 200;
+const errorMarginMS = 100;
 
 export default function CustomList({
   type,
@@ -165,7 +165,7 @@ export default function CustomList({
         ListFooterComponent={
           lastRenderAlways
             ? lastElement
-            : items.length > 0 && isAllPagesFinishedRef.current === true
+            : items.length > 5 && isAllPagesFinishedRef.current === true
             ? lastElement
             : undefined
         }

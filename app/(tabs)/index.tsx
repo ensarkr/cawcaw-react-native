@@ -1,21 +1,33 @@
-import React from "react";
+import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import CustomList from "../../components/CustomList";
 import WhiteText from "../../components/WhiteText";
-import { explorePostsRequest } from "../../functions/requests";
+import { getExplorePostsRequest } from "../../functions/requests";
 import Post from "../../components/Post";
+import CreatePost from "../../components/CreatePost";
+import useNewUserPosts from "../../hooks/useNewUserPosts";
 
-export default function Home() {
+const Post_MEMO = memo(Post);
+
+export default function HomePage() {
   const safeArea = useSafeAreaInsets();
+  const newUserPostsHook = useNewUserPosts();
 
   return (
-    <View style={{ paddingTop: safeArea.top, flex: 1 }}>
+    <View style={[{ paddingTop: safeArea.top }, styles.view]}>
       <CustomList
         style={styles.list}
         type="posts"
-        fetchFunction={explorePostsRequest}
-        renderItem={(post) => <Post type="post" post={post}></Post>}
+        fetchFunction={getExplorePostsRequest}
+        renderItem={(post) => <Post_MEMO type="post" post={post}></Post_MEMO>}
+        firstElement={
+          <CreatePost
+            userPosts={newUserPostsHook.userPosts}
+            addNewUserPost={newUserPostsHook.addNewUserPost}
+          ></CreatePost>
+        }
+        onRefresh={newUserPostsHook.clearUserPosts}
         lastElement={
           <View style={styles.lastElement}>
             <WhiteText>You have reached to the end.</WhiteText>
@@ -27,6 +39,7 @@ export default function Home() {
 }
 
 const styles = StyleSheet.create({
+  view: { flex: 1 },
   list: {
     padding: 5,
     gap: 10,

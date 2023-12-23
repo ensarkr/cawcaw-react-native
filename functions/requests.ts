@@ -1,6 +1,8 @@
+import { DocumentPickerAsset } from "expo-document-picker";
 import { doubleReturn } from "../typings/global";
 import {
   commentOnPostRequestBody,
+  createPostResponseBody,
   getCommentsResponse,
   getPostResponse,
   getPostsResponse,
@@ -93,7 +95,7 @@ async function signInRequest({
   }
 }
 
-async function explorePostsRequest(
+async function getExplorePostsRequest(
   page: number,
   endDate: Date
 ): Promise<getPostsResponse> {
@@ -159,7 +161,7 @@ async function likeOrUnlikePostRequest(
   }
 }
 
-async function followingPostsRequest(
+async function getFollowingPostsRequest(
   page: number,
   endDate: Date
 ): Promise<getPostsResponse> {
@@ -191,7 +193,7 @@ async function followingPostsRequest(
   }
 }
 
-async function postRequest(postId: number): Promise<getPostResponse> {
+async function getPostRequest(postId: number): Promise<getPostResponse> {
   try {
     const jwt_token = await SecureStorage.getItemAsync("jwt_token");
 
@@ -253,7 +255,7 @@ async function addCommentRequest(
   }
 }
 
-async function postCommentsRequest(
+async function getPostCommentsRequest(
   postId: number,
   page: number,
   endDate: Date
@@ -281,13 +283,59 @@ async function postCommentsRequest(
   }
 }
 
+async function createPostRequest(
+  text: string,
+  image: DocumentPickerAsset | null
+): Promise<createPostResponseBody> {
+  try {
+    const jwt_token = await SecureStorage.getItemAsync("jwt_token");
+
+    if (jwt_token === null) {
+      return { status: false, message: "Not signed in." };
+    }
+
+    const formData = new FormData();
+    formData.append("text", text);
+
+    if (image !== null) {
+      formData.append("isThereAnImage", "yes");
+      formData.append("image", {
+        name: image.name,
+        type: image.mimeType,
+        uri: image.uri,
+      } as any);
+    } else {
+      formData.append("isThereAnImage", "no");
+    }
+
+    const res = await fetch(
+      (process.env.EXPO_PUBLIC_API_URL as string) + "/post/create",
+      {
+        method: "POST",
+        headers: {
+          authorization: jwt_token,
+        },
+        body: formData,
+      }
+    );
+
+    const data = await res.json();
+
+    return data;
+  } catch (e) {
+    console.log(JSON.stringify(e));
+    return { status: false, message: (e as Error).message };
+  }
+}
+
 export {
   signUpRequest,
   signInRequest,
-  explorePostsRequest,
+  getExplorePostsRequest,
   likeOrUnlikePostRequest,
-  followingPostsRequest,
-  postRequest,
-  postCommentsRequest,
+  getFollowingPostsRequest,
+  getPostRequest,
+  getPostCommentsRequest,
   addCommentRequest,
+  createPostRequest,
 };

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { postComment } from "../typings/database";
 
-export default function useComment(postId: number) {
+export default function useNewUserComments(postId: number) {
   const [userComments, setUserComments] = useState<postComment[]>([]);
   const clearUserComments = () => setUserComments([]);
   const addNewUserComment = (

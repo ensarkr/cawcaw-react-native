@@ -3,7 +3,16 @@ import { Tabs } from "expo-router/tabs";
 import { View } from "react-native";
 export default function TabsLayout() {
   return (
-    <Tabs initialRouteName="index" screenOptions={{ headerShown: false ,}}>
+    <Tabs
+      initialRouteName="index"
+      screenOptions={{
+        headerShown: false,
+        tabBarActiveTintColor: "white",
+        tabBarBackground: () => (
+          <View style={{ flex: 1, backgroundColor: "black" }}></View>
+        ),
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{ href: "/", title: "home" }}

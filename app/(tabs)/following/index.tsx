@@ -1,24 +1,18 @@
-import React, { useEffect, useRef, useState } from "react";
-import {
-  Button,
-  FlatList,
-  Text,
-  View,
-  StyleSheet,
-  Pressable,
-} from "react-native";
+import React, { memo } from "react";
+import { View, StyleSheet, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { post } from "../../../typings/database";
-import { followingPostsRequest } from "../../../functions/requests";
+import { getFollowingPostsRequest } from "../../../functions/requests";
 import CustomList from "../../../components/CustomList";
 import Post from "../../../components/Post";
 import WhiteText from "../../../components/WhiteText";
 import useAuth from "../../../context/useAuth";
 import { router } from "expo-router";
 
-export default function Following() {
-  const safeArea = useSafeAreaInsets();
+const Post_MEMO = memo(Post);
 
+export default function FollowingPage() {
+  const safeArea = useSafeAreaInsets();
   const auth = useAuth();
 
   return (
@@ -39,8 +33,10 @@ export default function Following() {
         <CustomList
           style={styles.list}
           type="posts"
-          fetchFunction={followingPostsRequest}
-          renderItem={(post: post) => <Post type="post" post={post}></Post>}
+          fetchFunction={getFollowingPostsRequest}
+          renderItem={(post: post) => (
+            <Post_MEMO type="post" post={post}></Post_MEMO>
+          )}
           refetchWhenAuthChanges={false}
           lastElement={
             <View style={styles.lastElement}>
@@ -54,22 +50,19 @@ export default function Following() {
 }
 
 const styles = StyleSheet.create({
+  view: {
+    flex: 1,
+  },
   list: {
     padding: 5,
     gap: 10,
-    backgroundColor: "black",
     paddingTop: 15,
     paddingBottom: 15,
+    backgroundColor: "black",
   },
   lastElement: {
     paddingTop: 15,
     justifyContent: "center",
     alignItems: "center",
-  },
-  view: {
-    backgroundColor: "black",
-    justifyContent: "center",
-    alignItems: "center",
-    flex: 1,
   },
 });

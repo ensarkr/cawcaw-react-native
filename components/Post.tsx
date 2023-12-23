@@ -1,12 +1,14 @@
 import { router } from "expo-router";
 import { post, postComment } from "../typings/database";
 import { View, StyleSheet, Image, Pressable, ToastAndroid } from "react-native";
-import { useState } from "react";
+import { memo, useState } from "react";
 import useAuth from "../context/useAuth";
 import { likeOrUnlikePostRequest } from "../functions/requests";
 import WhiteText from "./WhiteText";
 import AddComment from "./AddComment";
 import Comment from "./Comment";
+
+const Comment_Memo = memo(Comment);
 
 type postComponentProps =
   | {
@@ -33,6 +35,7 @@ export default function Post({
   userComments,
   addNewUserComment,
 }: postComponentProps) {
+  // console.log("post rerender" + post.id);
   return (
     <>
       <Pressable
@@ -51,7 +54,7 @@ export default function Post({
             </View>
           </Pressable>
           <WhiteText style={styles.fade}>
-            {post.insertedAt.toString().split("T")[0]}
+            {new Date(post.insertedAt).toISOString().split("T")[0]}
           </WhiteText>
         </View>
         <WhiteText style={styles.justify}>{post.text}</WhiteText>
@@ -96,7 +99,7 @@ export default function Post({
             addNewUserComment={addNewUserComment}
           ></AddComment>
           {userComments.map((e) => (
-            <Comment key={e.id} comment={e}></Comment>
+            <Comment_Memo key={e.id} comment={e}></Comment_Memo>
           ))}
         </>
       ) : (
@@ -184,7 +187,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderColor: "gray",
     borderWidth: 1,
-    color: "while",
+    color: "white",
     gap: 15,
   },
   userView: {
