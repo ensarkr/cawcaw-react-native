@@ -6,6 +6,8 @@ import {
   getCommentsResponse,
   getPostResponse,
   getPostsResponse,
+  getUserResponse,
+  getUsersResponse,
   signInResponseBody,
   signUpResponseBody,
 } from "../typings/http";
@@ -146,6 +148,40 @@ async function likeOrUnlikePostRequest(
           "Content-Type": "application/json; charset=utf-8",
         },
         body: JSON.stringify({ postId: postId }),
+      }
+    );
+
+    if (res.status === 200) {
+      return { status: true };
+    }
+
+    const data = await res.json();
+    return data;
+  } catch (e) {
+    console.log(JSON.stringify(e));
+    return { status: false, message: (e as Error).message };
+  }
+}
+
+async function followOrUnfollowUserRequest(
+  userId: number,
+  type: "follow" | "unfollow"
+): Promise<doubleReturn<undefined>> {
+  try {
+    const jwt_token = await SecureStorage.getItemAsync("jwt_token");
+    if (jwt_token === null) {
+      return { status: false, message: "Not signed in." };
+    }
+
+    const res = await fetch(
+      (process.env.EXPO_PUBLIC_API_URL as string) + "/action/" + type,
+      {
+        method: "POST",
+        headers: {
+          authorization: jwt_token,
+          "Content-Type": "application/json; charset=utf-8",
+        },
+        body: JSON.stringify({ targetId: userId }),
       }
     );
 
@@ -328,6 +364,277 @@ async function createPostRequest(
   }
 }
 
+async function getPublicUserRequest(userId: number): Promise<getUserResponse> {
+  try {
+    const jwt_token = await SecureStorage.getItemAsync("jwt_token");
+
+    const res = await fetch(
+      (process.env.EXPO_PUBLIC_API_URL as string) + "/data/user/" + userId,
+      {
+        method: "GET",
+        headers:
+          jwt_token !== null
+            ? {
+                authorization: jwt_token,
+              }
+            : {},
+      }
+    );
+
+    const data = await res.json();
+
+    return data;
+  } catch (e) {
+    console.log(JSON.stringify(e));
+    return { status: false, message: (e as Error).message };
+  }
+}
+
+async function getUserPostsRequest(
+  page: number,
+  endDate: Date,
+  userId: number
+): Promise<getPostsResponse> {
+  try {
+    const jwt_token = await SecureStorage.getItemAsync("jwt_token");
+
+    const res = await fetch(
+      returnURLWithQueries(
+        (process.env.EXPO_PUBLIC_API_URL as string) +
+          "/data/user/" +
+          userId +
+          "/posts",
+        { page, endDate }
+      ),
+      {
+        method: "GET",
+        headers:
+          jwt_token !== null
+            ? {
+                authorization: jwt_token,
+              }
+            : {},
+      }
+    );
+
+    const data = await res.json();
+
+    return data;
+  } catch (e) {
+    console.log(JSON.stringify(e));
+    return { status: false, message: (e as Error).message };
+  }
+}
+async function getUserLikesRequest(
+  page: number,
+  endDate: Date,
+  userId: number
+): Promise<getPostsResponse> {
+  try {
+    const jwt_token = await SecureStorage.getItemAsync("jwt_token");
+
+    const res = await fetch(
+      returnURLWithQueries(
+        (process.env.EXPO_PUBLIC_API_URL as string) +
+          "/data/user/" +
+          userId +
+          "/likes",
+        { page, endDate }
+      ),
+      {
+        method: "GET",
+        headers:
+          jwt_token !== null
+            ? {
+                authorization: jwt_token,
+              }
+            : {},
+      }
+    );
+
+    const data = await res.json();
+
+    return data;
+  } catch (e) {
+    console.log(JSON.stringify(e));
+    return { status: false, message: (e as Error).message };
+  }
+}
+async function getUserComments(
+  page: number,
+  endDate: Date,
+  userId: number
+): Promise<getCommentsResponse> {
+  try {
+    const jwt_token = await SecureStorage.getItemAsync("jwt_token");
+
+    const res = await fetch(
+      returnURLWithQueries(
+        (process.env.EXPO_PUBLIC_API_URL as string) +
+          "/data/user/" +
+          userId +
+          "/comments",
+        { page, endDate }
+      ),
+      {
+        method: "GET",
+        headers:
+          jwt_token !== null
+            ? {
+                authorization: jwt_token,
+              }
+            : {},
+      }
+    );
+
+    const data = await res.json();
+
+    return data;
+  } catch (e) {
+    console.log(JSON.stringify(e));
+    return { status: false, message: (e as Error).message };
+  }
+}
+async function getUserFollowersRequest(
+  page: number,
+  endDate: Date,
+  userId: number
+): Promise<getUsersResponse> {
+  try {
+    const jwt_token = await SecureStorage.getItemAsync("jwt_token");
+
+    const res = await fetch(
+      returnURLWithQueries(
+        (process.env.EXPO_PUBLIC_API_URL as string) +
+          "/data/user/" +
+          userId +
+          "/followers",
+        { page, endDate }
+      ),
+      {
+        method: "GET",
+        headers:
+          jwt_token !== null
+            ? {
+                authorization: jwt_token,
+              }
+            : {},
+      }
+    );
+
+    const data = await res.json();
+
+    return data;
+  } catch (e) {
+    console.log(JSON.stringify(e));
+    return { status: false, message: (e as Error).message };
+  }
+}
+
+async function getUserFollowingsRequest(
+  page: number,
+  endDate: Date,
+  userId: number
+): Promise<getUsersResponse> {
+  try {
+    const jwt_token = await SecureStorage.getItemAsync("jwt_token");
+
+    const res = await fetch(
+      returnURLWithQueries(
+        (process.env.EXPO_PUBLIC_API_URL as string) +
+          "/data/user/" +
+          userId +
+          "/followings",
+        { page, endDate }
+      ),
+      {
+        method: "GET",
+        headers:
+          jwt_token !== null
+            ? {
+                authorization: jwt_token,
+              }
+            : {},
+      }
+    );
+
+    const data = await res.json();
+
+    return data;
+  } catch (e) {
+    console.log(JSON.stringify(e));
+    return { status: false, message: (e as Error).message };
+  }
+}
+
+async function searchPostsRequest(
+  page: number,
+  endDate: Date,
+  searchQuery: string
+): Promise<getPostsResponse> {
+  if (searchQuery.length === 0)
+    return { status: true, value: { pageCount: 0, posts: [] } };
+
+  try {
+    const jwt_token = await SecureStorage.getItemAsync("jwt_token");
+
+    const res = await fetch(
+      returnURLWithQueries(
+        (process.env.EXPO_PUBLIC_API_URL as string) + "/data/posts/search",
+        { page, endDate, searchQuery }
+      ),
+      {
+        method: "GET",
+        headers:
+          jwt_token !== null
+            ? {
+                authorization: jwt_token,
+              }
+            : {},
+      }
+    );
+
+    const data = await res.json();
+
+    return data;
+  } catch (e) {
+    console.log(JSON.stringify(e));
+    return { status: false, message: (e as Error).message };
+  }
+}
+async function searchUsersRequest(
+  page: number,
+  endDate: Date,
+  searchQuery: string
+): Promise<getUsersResponse> {
+  try {
+    const jwt_token = await SecureStorage.getItemAsync("jwt_token");
+
+    const res = await fetch(
+      returnURLWithQueries(
+        (process.env.EXPO_PUBLIC_API_URL as string) + "/data/users/search",
+        { page, endDate, searchQuery }
+      ),
+      {
+        method: "GET",
+        headers:
+          jwt_token !== null
+            ? {
+                authorization: jwt_token,
+              }
+            : {},
+      }
+    );
+
+    const data = await res.json();
+
+    return data;
+  } catch (e) {
+    console.log(JSON.stringify(e));
+    return { status: false, message: (e as Error).message };
+  }
+}
+
 export {
   signUpRequest,
   signInRequest,
@@ -338,4 +645,13 @@ export {
   getPostCommentsRequest,
   addCommentRequest,
   createPostRequest,
+  getPublicUserRequest,
+  getUserPostsRequest,
+  getUserLikesRequest,
+  getUserComments,
+  getUserFollowersRequest,
+  followOrUnfollowUserRequest,
+  getUserFollowingsRequest,
+  searchPostsRequest,
+  searchUsersRequest,
 };

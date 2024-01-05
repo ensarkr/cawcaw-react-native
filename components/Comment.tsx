@@ -4,7 +4,6 @@ import { View, StyleSheet, Pressable } from "react-native";
 import WhiteText from "./WhiteText";
 
 export default function Comment({ comment }: { comment: postComment }) {
-  // console.log("comment rerender" + comment.id);
   return (
     <>
       <Pressable
@@ -34,7 +33,6 @@ export default function Comment({ comment }: { comment: postComment }) {
 
 const styles = StyleSheet.create({
   view: {
-    marginTop: 15,
     padding: 16,
     borderColor: "gray",
     borderBottomWidth: 1,

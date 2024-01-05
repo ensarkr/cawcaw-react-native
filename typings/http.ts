@@ -109,7 +109,7 @@ type searchUsersQuery = {
 } & getPageQuery;
 
 type getUsersResponse = doubleReturn<{
-  users: userPartial[];
+  users: user[];
   pageCount: number;
 }> &
   action;

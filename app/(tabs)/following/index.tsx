@@ -7,7 +7,7 @@ import CustomList from "../../../components/CustomList";
 import Post from "../../../components/Post";
 import WhiteText from "../../../components/WhiteText";
 import useAuth from "../../../context/useAuth";
-import { router } from "expo-router";
+import { Link, router } from "expo-router";
 
 const Post_MEMO = memo(Post);
 
@@ -20,15 +20,17 @@ export default function FollowingPage() {
       {auth.user.status === "loading" ? (
         <></>
       ) : auth.user.status === "guest" ? (
-        <>
+        <View style={styles.centeredView}>
           <WhiteText>Sign in to see posts by users that you follow.</WhiteText>
-          <Pressable onPress={() => router.push("/auth/signIn")}>
-            <WhiteText>Sign In</WhiteText>
-          </Pressable>
-          <Pressable onPress={() => router.push("/auth/signUp")}>
-            <WhiteText>Sign Up</WhiteText>
-          </Pressable>
-        </>
+          <View style={styles.buttonsView}>
+            <Link href={"/auth/signIn"} style={styles.button}>
+              <WhiteText>SIGN IN</WhiteText>
+            </Link>
+            <Link href={"/auth/signUp"} style={styles.button}>
+              <WhiteText>SIGN UP</WhiteText>
+            </Link>
+          </View>
+        </View>
       ) : (
         <CustomList
           style={styles.list}
@@ -64,5 +66,26 @@ const styles = StyleSheet.create({
     paddingTop: 15,
     justifyContent: "center",
     alignItems: "center",
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 25,
+    backgroundColor: "black",
+  },
+  buttonsView: {
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 5,
+    backgroundColor: "black",
+  },
+  button: {
+    borderColor: "gray",
+    borderWidth: 1,
+    borderRadius: 5,
+    width: 120,
+    textAlign: "center",
+    padding: 5,
   },
 });

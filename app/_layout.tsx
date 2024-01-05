@@ -27,6 +27,33 @@ export default function StackLayout() {
               headerTintColor: "white",
             }}
           ></Stack.Screen>
+          <Stack.Screen
+            name="user/[userId]"
+            options={{
+              title: "USER",
+              headerStyle: { backgroundColor: "black" },
+              headerTitleStyle: { color: "white" },
+              headerTintColor: "white",
+            }}
+          ></Stack.Screen>
+          <Stack.Screen
+            name="auth/signIn/index"
+            options={{
+              title: "SIGN IN",
+              headerStyle: { backgroundColor: "black" },
+              headerTitleStyle: { color: "white" },
+              headerTintColor: "white",
+            }}
+          ></Stack.Screen>
+          <Stack.Screen
+            name="auth/signUp/index"
+            options={{
+              title: "SIGN UP",
+              headerStyle: { backgroundColor: "black" },
+              headerTitleStyle: { color: "white" },
+              headerTintColor: "white",
+            }}
+          ></Stack.Screen>
         </Stack>
       </AuthProvider>
     </View>

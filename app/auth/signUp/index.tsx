@@ -1,8 +1,18 @@
 import { useState } from "react";
-import { View, Text, TextInput, Button } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  Pressable,
+  StyleSheet,
+  ToastAndroid,
+} from "react-native";
 import useCustomTextInput from "../../../hooks/useCustomTextInput";
 import CustomTextInput from "../../../components/CustomTextInput";
 import { signUpRequest } from "../../../functions/requests";
+import WhiteText from "../../../components/WhiteText";
+import { router } from "expo-router";
 
 export default function SignUp() {
   const displayName = useCustomTextInput({ uiName: "display name" });
@@ -38,6 +48,8 @@ export default function SignUp() {
 
     if (res.status) {
       setFormError(null);
+      router.replace("/auth/signIn");
+      ToastAndroid.show("Successfully signed up.", 200);
     } else {
       setFormError(res.message);
     }
@@ -46,15 +58,44 @@ export default function SignUp() {
   };
 
   return (
-    <View>
-      <Text>Sign up</Text>
-      {formError !== null && <Text>{formError}</Text>}
-      <CustomTextInput {...displayName}></CustomTextInput>
-      <CustomTextInput {...username}></CustomTextInput>
-      <CustomTextInput {...password}></CustomTextInput>
-      <CustomTextInput {...rePassword}></CustomTextInput>
+    <View style={styles.main}>
+      <CustomTextInput style={styles.box} {...displayName}></CustomTextInput>
+      <CustomTextInput style={styles.box} {...username}></CustomTextInput>
+      <CustomTextInput style={styles.box} {...password}></CustomTextInput>
+      <CustomTextInput style={styles.box} {...rePassword}></CustomTextInput>
+      {formError !== null && <WhiteText>{formError}</WhiteText>}
 
-      <Button title="sign up" onPress={handleSubmit} disabled={isLoading} />
+      <Pressable
+        style={[styles.box, styles.button]}
+        onPress={handleSubmit}
+        disabled={isLoading}
+      >
+        <Text> SIGN UP</Text>
+      </Pressable>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  main: {
+    backgroundColor: "black",
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 15,
+  },
+  box: {
+    width: 250,
+    justifyContent: "center",
+    alignItems: "center",
+    height: 50,
+    borderWidth: 1,
+    borderColor: "gray",
+    borderRadius: 5,
+    padding: 10,
+  },
+  button: {
+    backgroundColor: "white",
+    height: 40,
+  },
+});

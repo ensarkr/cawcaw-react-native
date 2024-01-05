@@ -1,13 +1,22 @@
 import { useState } from "react";
-import { View, Text, Button } from "react-native";
+import {
+  View,
+  Text,
+  Button,
+  StyleSheet,
+  Pressable,
+  ToastAndroid,
+} from "react-native";
 import useCustomTextInput from "../../../hooks/useCustomTextInput";
 import CustomTextInput from "../../../components/CustomTextInput";
 import { signInRequest } from "../../../functions/requests";
 import useAuth from "../../../context/useAuth";
+import { router } from "expo-router";
+import WhiteText from "../../../components/WhiteText";
 
 export default function SignIn() {
-  const username = useCustomTextInput("username", false);
-  const password = useCustomTextInput("password", true);
+  const username = useCustomTextInput({ uiName: "username" });
+  const password = useCustomTextInput({ uiName: "password", isPassword: true });
 
   const [formError, setFormError] = useState<null | string>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -35,6 +44,8 @@ export default function SignIn() {
     if (res.status) {
       setFormError(null);
       auth.setUserAndStorageFromToken(res.value);
+      ToastAndroid.show("Signed in.", 200);
+      router.back();
     } else {
       setFormError(res.message);
     }
@@ -43,13 +54,43 @@ export default function SignIn() {
   };
 
   return (
-    <View>
-      <Text>Sign up</Text>
-      {formError !== null && <Text>{formError}</Text>}
-      <CustomTextInput {...username}></CustomTextInput>
-      <CustomTextInput {...password}></CustomTextInput>
+    <View style={styles.main}>
+      <Text>Sign in</Text>
 
-      <Button title="sign in" onPress={handleSubmit} disabled={isLoading} />
+      <CustomTextInput {...username} style={styles.box}></CustomTextInput>
+      <CustomTextInput {...password} style={styles.box}></CustomTextInput>
+      {formError !== null && <WhiteText>{formError}</WhiteText>}
+      <Pressable
+        style={[styles.box, styles.button]}
+        onPress={handleSubmit}
+        disabled={isLoading}
+      >
+        <Text> SIGN IN</Text>
+      </Pressable>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  main: {
+    backgroundColor: "black",
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 15,
+  },
+  box: {
+    width: 250,
+    justifyContent: "center",
+    alignItems: "center",
+    height: 50,
+    borderWidth: 1,
+    borderColor: "gray",
+    borderRadius: 5,
+    padding: 10,
+  },
+  button: {
+    backgroundColor: "white",
+    height: 40,
+  },
+});

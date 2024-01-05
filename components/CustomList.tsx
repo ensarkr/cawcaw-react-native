@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { post, postComment, userPartial } from "../typings/database";
+import { post, postComment, userPartial, user } from "../typings/database";
 import {
   VirtualizedList,
   View,
@@ -35,7 +35,7 @@ type CustomListProps = (
   | {
       type: "users";
       fetchFunction: (page: number, endPage: Date) => Promise<getUsersResponse>;
-      renderItem: (userPartial: userPartial) => React.ReactElement;
+      renderItem: (user: user) => React.ReactElement;
     }
   | {
       type: "comments";

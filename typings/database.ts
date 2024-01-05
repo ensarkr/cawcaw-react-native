@@ -9,6 +9,7 @@ type user_DB = {
   followers_count: number;
   following_count: number;
   inserted_at: dbDate;
+  requested_follows?: boolean;
 };
 
 type user = {
@@ -18,6 +19,7 @@ type user = {
   description: string;
   followersCount: number;
   followingCount: number;
+  requestedFollows: boolean;
 };
 
 type userPartial = Pick<user, "id" | "username" | "displayName">;

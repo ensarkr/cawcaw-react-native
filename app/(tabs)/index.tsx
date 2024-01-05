@@ -39,7 +39,7 @@ export default function HomePage() {
 }
 
 const styles = StyleSheet.create({
-  view: { flex: 1 },
+  view: { flex: 1, backgroundColor: "black" },
   list: {
     padding: 5,
     gap: 10,
