@@ -33,11 +33,11 @@ export default function CreatePost({
     isUploading || (image === null && postText.props.value.trim().length === 0);
 
   const handleSubmit = async () => {
-    setIsUploading(true);
     if (auth.user.status !== "user") {
       ToastAndroid.show("You have to sign in to post.", 200);
       return;
     }
+    setIsUploading(true);
 
     const res = await createPostRequest(postText.props.value, image);
 
