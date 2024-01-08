@@ -1,5 +1,5 @@
 import useCustomTextInput from "../hooks/useCustomTextInput";
-import { Text, TextInput, TextInputProps } from "react-native";
+import { TextInput, TextInputProps } from "react-native";
 import WhiteText from "./WhiteText";
 
 export default function CustomTextInput(

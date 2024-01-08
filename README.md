@@ -2,7 +2,7 @@
 
 ## About
 
-Low-effort (might improve later) social media app. Main purpose was to learn react-native. Made for only Android. Uses express for backend [repo link](https://github.com/ensarkr/cawcaw-express).
+Social media app made using react-native. Main purpose was to learn react-native. Made for only Android. Uses express for backend [(backend repo link)](https://github.com/ensarkr/cawcaw-express).
 
 ## Features
 
@@ -22,8 +22,8 @@ Low-effort (might improve later) social media app. Main purpose was to learn rea
 - User - See posts that posted by the user, posts that liked by the user and comments that the user commented. Also see user followers and followings.
 - Post - See post, its comments and add new comment.
 - Auth
-    - Sign In
-    - Sign Up
+  - Sign In
+  - Sign Up
 
 ## Preview
 
@@ -45,6 +45,9 @@ After this there are multiple choices.
 
 1. Download Expo Go app to your android device and scan the QR code in the terminal.
 2. Download Android Studio and use its android simulator.
+
+Also instead of using my vercel api. It is possible to setup [my backend](https://github.com/ensarkr/cawcaw-express) on your local machine. If you choose to do this you have to change EXPO_PUBLIC_API_URL in .env accordingly.
+
 
 ## Technologies
 

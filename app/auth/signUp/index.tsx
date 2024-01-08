@@ -1,13 +1,5 @@
 import { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  Button,
-  Pressable,
-  StyleSheet,
-  ToastAndroid,
-} from "react-native";
+import { View, Text, Pressable, StyleSheet, ToastAndroid } from "react-native";
 import useCustomTextInput from "../../../hooks/useCustomTextInput";
 import CustomTextInput from "../../../components/CustomTextInput";
 import { signUpRequest } from "../../../functions/requests";

@@ -1,14 +1,16 @@
-import { Link, router, useLocalSearchParams } from "expo-router";
-import { Button, Text, View, StyleSheet, ToastAndroid } from "react-native";
+import { router, useLocalSearchParams } from "expo-router";
+import { View, StyleSheet, ToastAndroid, VirtualizedList } from "react-native";
 import useAuth from "../../context/useAuth";
 import Post from "../../components/Post";
 import { memo, useEffect, useState } from "react";
-import { getPostCommentsRequest, getPostRequest } from "../../functions/requests";
-import { post, postComment } from "../../typings/database";
-import CustomList from "../../components/CustomList";
-import WhiteText from "../../components/WhiteText";
+import {
+  getPostCommentsRequest,
+  getPostRequest,
+} from "../../functions/requests";
+import { post } from "../../typings/database";
 import useNewUserComments from "../../hooks/useNewUserComments";
 import Comment from "../../components/Comment";
+import useCustomList from "../../hooks/useCustomList";
 
 const Comment_Memo = memo(Comment);
 
@@ -17,6 +19,16 @@ export default function PostPage() {
   const [postData, setPostData] = useState<post | null>(null);
   const auth = useAuth();
   const newUserCommentsHook = useNewUserComments(parseInt(postId as string));
+  const postCommentsList = useCustomList({
+    type: "comments",
+    renderItem: (comment) => <Comment_Memo comment={comment}></Comment_Memo>,
+    fetchFunction: (page, endPage) =>
+      getPostCommentsRequest(parseInt(postId as string), page, endPage),
+    onRefresh: () => {
+      getAndSetPostData();
+      newUserCommentsHook.clearUserComments();
+    },
+  });
 
   const getAndSetPostData = async () => {
     const res = await getPostRequest(parseInt(postId as string));
@@ -31,14 +43,14 @@ export default function PostPage() {
 
   useEffect(() => {
     getAndSetPostData();
+    postCommentsList.startFetching();
   }, [auth.user.status]);
 
   return (
     <View style={styles.view}>
-      <CustomList
-        style={[styles.list]}
-        type="comments"
-        firstElement={
+      <VirtualizedList
+        {...postCommentsList.listProps}
+        ListHeaderComponent={
           postData !== null ? (
             <Post
               type="postWithComments"
@@ -50,23 +62,7 @@ export default function PostPage() {
             <></>
           )
         }
-        fetchFunction={(page, endPage) =>
-          getPostCommentsRequest(parseInt(postId as string), page, endPage)
-        }
-        renderItem={(comment) => (
-          <Comment_Memo comment={comment}></Comment_Memo>
-        )}
-        onRefresh={() => {
-          getAndSetPostData();
-          newUserCommentsHook.clearUserComments();
-        }}
-        lastElement={
-          <View style={styles.lastElement}>
-            <WhiteText>You have reached to the end.</WhiteText>
-          </View>
-        }
-        noItemError=" "
-      ></CustomList>
+      />
     </View>
   );
 }
@@ -74,17 +70,5 @@ export default function PostPage() {
 const styles = StyleSheet.create({
   view: {
     flex: 1,
-  },
-  list: {
-    padding: 5,
-    gap: 10,
-    backgroundColor: "black",
-    paddingTop: 0,
-    paddingBottom: 15,
-  },
-  lastElement: {
-    paddingTop: 15,
-    justifyContent: "center",
-    alignItems: "center",
   },
 });

@@ -1,13 +1,10 @@
 import { Pressable, StyleSheet, ToastAndroid, View } from "react-native";
 import { user } from "../typings/database";
-import { router } from "expo-router";
 import WhiteText from "./WhiteText";
 import useAuth from "../context/useAuth";
 import { useState } from "react";
-import {
-  followOrUnfollowUserRequest,
-  likeOrUnlikePostRequest,
-} from "../functions/requests";
+import { followOrUnfollowUserRequest } from "../functions/requests";
+import { pushUserRoute } from "../functions/router";
 
 export default function User({
   user,
@@ -18,12 +15,14 @@ export default function User({
   doBeforeNavigation?: () => void;
   doAfterAction?: () => void;
 }) {
+  const auth = useAuth();
+
   return (
     <Pressable
       style={styles.view}
       onPress={() => {
         if (doBeforeNavigation !== undefined) doBeforeNavigation();
-        router.push("/user/" + user.id);
+        pushUserRoute(auth.user, user.id);
       }}
     >
       <View style={styles.userView}>
@@ -76,6 +75,10 @@ function FollowButton({
 
     if (doAfterAction) doAfterAction();
   };
+
+  if (auth.user.status === "user" && auth.user.id === userId) {
+    return <></>;
+  }
 
   return (
     <>

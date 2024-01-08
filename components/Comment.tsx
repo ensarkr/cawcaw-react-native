@@ -2,8 +2,12 @@ import { router } from "expo-router";
 import { postComment } from "../typings/database";
 import { View, StyleSheet, Pressable } from "react-native";
 import WhiteText from "./WhiteText";
+import useAuth from "../context/useAuth";
+import { pushUserRoute } from "../functions/router";
 
 export default function Comment({ comment }: { comment: postComment }) {
+  const auth = useAuth();
+
   return (
     <>
       <Pressable
@@ -13,7 +17,7 @@ export default function Comment({ comment }: { comment: postComment }) {
         <View style={styles.userView}>
           <Pressable
             onPress={() => {
-              router.push("/user/" + comment.userId);
+              pushUserRoute(auth.user, comment.userId);
             }}
           >
             <View>

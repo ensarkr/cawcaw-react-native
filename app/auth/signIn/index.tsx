@@ -1,12 +1,5 @@
 import { useState } from "react";
-import {
-  View,
-  Text,
-  Button,
-  StyleSheet,
-  Pressable,
-  ToastAndroid,
-} from "react-native";
+import { View, Text, StyleSheet, Pressable, ToastAndroid } from "react-native";
 import useCustomTextInput from "../../../hooks/useCustomTextInput";
 import CustomTextInput from "../../../components/CustomTextInput";
 import { signInRequest } from "../../../functions/requests";
@@ -56,8 +49,11 @@ export default function SignIn() {
   return (
     <View style={styles.main}>
       <Text>Sign in</Text>
-
-      <CustomTextInput {...username} style={styles.box}></CustomTextInput>
+      <CustomTextInput
+        {...username}
+        multiline={false}
+        style={styles.box}
+      ></CustomTextInput>
       <CustomTextInput {...password} style={styles.box}></CustomTextInput>
       {formError !== null && <WhiteText>{formError}</WhiteText>}
       <Pressable
@@ -67,6 +63,12 @@ export default function SignIn() {
       >
         <Text> SIGN IN</Text>
       </Pressable>
+      <View style={styles.row}>
+        <WhiteText>No account?</WhiteText>
+        <Pressable onPress={() => router.replace("/auth/signUp")}>
+          <WhiteText> Sign Up</WhiteText>
+        </Pressable>
+      </View>
     </View>
   );
 }
@@ -92,5 +94,8 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: "white",
     height: 40,
+  },
+  row: {
+    flexDirection: "row",
   },
 });

@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { user, userPartial } from "../typings/database";
+import { userPartial } from "../typings/database";
 import * as SecureStorage from "expo-secure-store";
 import { decodeJWTPayload, expirationCheckJWTPayload } from "../functions/jwt";
 
@@ -8,7 +8,7 @@ const SetAuthContext = createContext<React.Dispatch<
   React.SetStateAction<auth>
 > | null>(null);
 
-type auth =
+export type auth =
   | { status: "loading" }
   | { status: "guest" }
   | ({ status: "user" } & userPartial);

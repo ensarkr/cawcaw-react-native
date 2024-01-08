@@ -1,4 +1,3 @@
-import { Slot, Stack } from "expo-router";
 import { Tabs } from "expo-router/tabs";
 import { Image, StyleSheet, View } from "react-native";
 export default function TabsLayout() {
@@ -17,7 +16,8 @@ export default function TabsLayout() {
         name="index"
         options={{
           href: "/",
-          title: "home",
+          title: "HOME",
+          tabBarHideOnKeyboard: true,
           tabBarIcon: () => (
             <Image
               style={styles.icon}
@@ -30,7 +30,7 @@ export default function TabsLayout() {
         name="following/index"
         options={{
           href: "/following",
-          title: "following",
+          title: "FOLLOWING",
           tabBarIcon: () => (
             <Image
               style={styles.icon}
@@ -43,7 +43,8 @@ export default function TabsLayout() {
         name="search/index"
         options={{
           href: "/search",
-          title: "search",
+          title: "SEARCH",
+          tabBarHideOnKeyboard: true,
           tabBarIcon: () => (
             <Image
               style={styles.icon}
@@ -56,7 +57,7 @@ export default function TabsLayout() {
         name="profile/index"
         options={{
           href: "/profile",
-          title: "profile",
+          title: "PROFILE",
           tabBarIcon: () => (
             <Image
               style={styles.icon}

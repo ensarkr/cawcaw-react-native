@@ -7,6 +7,7 @@ import { likeOrUnlikePostRequest } from "../functions/requests";
 import WhiteText from "./WhiteText";
 import AddComment from "./AddComment";
 import Comment from "./Comment";
+import { pushUserRoute } from "../functions/router";
 
 const Comment_Memo = memo(Comment);
 
@@ -35,7 +36,8 @@ export default function Post({
   userComments,
   addNewUserComment,
 }: postComponentProps) {
-  // console.log("post rerender" + post.id);
+  const auth = useAuth();
+
   return (
     <>
       <Pressable
@@ -45,7 +47,7 @@ export default function Post({
         <View style={styles.userView}>
           <Pressable
             onPress={() => {
-              router.push("/user/" + post.userId);
+              pushUserRoute(auth.user, post.userId);
             }}
           >
             <View>

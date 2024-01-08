@@ -1,13 +1,14 @@
-import React, { memo } from "react";
-import { View, StyleSheet, Pressable } from "react-native";
+import React, { memo, useEffect } from "react";
+import { View, StyleSheet, Pressable, VirtualizedList } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { post } from "../../../typings/database";
 import { getFollowingPostsRequest } from "../../../functions/requests";
-import CustomList from "../../../components/CustomList";
 import Post from "../../../components/Post";
 import WhiteText from "../../../components/WhiteText";
 import useAuth from "../../../context/useAuth";
-import { Link, router } from "expo-router";
+import { Link } from "expo-router";
+import LoadingView from "../../../components/LoadingView";
+import useCustomList from "../../../hooks/useCustomList";
 
 const Post_MEMO = memo(Post);
 
@@ -18,7 +19,7 @@ export default function FollowingPage() {
   return (
     <View style={[{ paddingTop: safeArea.top }, styles.view]}>
       {auth.user.status === "loading" ? (
-        <></>
+        <LoadingView></LoadingView>
       ) : auth.user.status === "guest" ? (
         <View style={styles.centeredView}>
           <WhiteText>Sign in to see posts by users that you follow.</WhiteText>
@@ -32,40 +33,31 @@ export default function FollowingPage() {
           </View>
         </View>
       ) : (
-        <CustomList
-          style={styles.list}
-          type="posts"
-          fetchFunction={getFollowingPostsRequest}
-          renderItem={(post: post) => (
-            <Post_MEMO type="post" post={post}></Post_MEMO>
-          )}
-          refetchWhenAuthChanges={false}
-          lastElement={
-            <View style={styles.lastElement}>
-              <WhiteText>You have reached to the end.</WhiteText>
-            </View>
-          }
-        ></CustomList>
+        <FollowingList></FollowingList>
       )}
     </View>
   );
 }
 
+function FollowingList() {
+  const followingList = useCustomList({
+    type: "posts",
+    fetchFunction: getFollowingPostsRequest,
+    renderItem: (post: post) => <Post_MEMO type="post" post={post}></Post_MEMO>,
+  });
+
+  const auth = useAuth();
+
+  useEffect(() => {
+    if (auth.user.status !== "loading") followingList.startFetching();
+  }, [auth.user]);
+
+  return <VirtualizedList {...followingList.listProps}></VirtualizedList>;
+}
+
 const styles = StyleSheet.create({
   view: {
     flex: 1,
-  },
-  list: {
-    padding: 5,
-    gap: 10,
-    paddingTop: 15,
-    paddingBottom: 15,
-    backgroundColor: "black",
-  },
-  lastElement: {
-    paddingTop: 15,
-    justifyContent: "center",
-    alignItems: "center",
   },
   centeredView: {
     flex: 1,
