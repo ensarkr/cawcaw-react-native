@@ -59,7 +59,10 @@ export default function Post({
             {new Date(post.insertedAt).toISOString().split("T")[0]}
           </WhiteText>
         </View>
-        <WhiteText style={styles.justify}>{post.text}</WhiteText>
+        {post.text.length !== 0 && (
+          <WhiteText style={styles.justify}>{post.text}</WhiteText>
+        )}
+
         {post.imageUrl !== null && (
           <Image
             source={{

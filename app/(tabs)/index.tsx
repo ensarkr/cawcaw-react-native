@@ -35,7 +35,8 @@ export default function HomePage() {
         <VirtualizedList
           {...exploreList.listProps}
           ListHeaderComponent={
-            exploreList.refreshing && exploreList.items.length === 0 ? (
+            !exploreList.didItStart ||
+            (exploreList.refreshing && exploreList.items.length === 0) ? (
               <></>
             ) : (
               <CreatePost

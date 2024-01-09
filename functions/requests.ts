@@ -55,7 +55,7 @@ async function signUpRequest({
       }
     );
 
-    if (res.status) {
+    if (res.status === 200) {
       return { status: true };
     }
 

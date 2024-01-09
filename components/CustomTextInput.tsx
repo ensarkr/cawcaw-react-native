@@ -1,25 +1,41 @@
 import useCustomTextInput from "../hooks/useCustomTextInput";
-import { TextInput, TextInputProps } from "react-native";
+import {
+  StyleSheet,
+  TextInput,
+  TextInputProps,
+  View,
+  ViewProps,
+} from "react-native";
 import WhiteText from "./WhiteText";
 
-export default function CustomTextInput(
-  props: TextInputProps & ReturnType<typeof useCustomTextInput>
-) {
+export default function CustomTextInput({
+  containerProps,
+  inputProps,
+}: {
+  containerProps?: ViewProps;
+  inputProps: TextInputProps & ReturnType<typeof useCustomTextInput>;
+}) {
   return (
-    <>
+    <View {...containerProps}>
       <TextInput
-        {...props.props}
+        {...inputProps.props}
         style={[
           { color: "white" },
-          props.props.value.length === 0 ? { opacity: 0.8 } : {},
-          props.style,
+          inputProps.props.value.length === 0 ? { opacity: 0.8 } : {},
+          inputProps.style,
         ]}
         placeholderTextColor="white"
-        multiline={props.multiline !== undefined ? props.multiline : true}
       ></TextInput>
-      {props.errorMessage !== null && (
-        <WhiteText>{props.errorMessage}</WhiteText>
+
+      {inputProps.errorMessage !== null && (
+        <View style={styles.error}>
+          <WhiteText>{inputProps.errorMessage}</WhiteText>
+        </View>
       )}
-    </>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  error: { padding: 5 },
+});

@@ -27,7 +27,7 @@ const User_MEMO = memo(User);
 export default function SearchPage() {
   const safeArea = useSafeAreaInsets();
   const [tab, setTab] = useState<tabs>("posts");
-  const search = useCustomTextInput({ uiName: "search" });
+  const search = useCustomTextInput({ uiName: "search", limit: 150 });
   const postsList = useCustomList({
     type: "posts",
     fetchFunction: (page: number, endPage: Date) =>
@@ -44,7 +44,10 @@ export default function SearchPage() {
   return (
     <View style={[{ paddingTop: safeArea.top }, styles.view]}>
       <View style={styles.searchView}>
-        <CustomTextInput {...search} style={styles.input}></CustomTextInput>
+        <CustomTextInput
+          containerProps={{ style: styles.inputContainer }}
+          inputProps={{ ...search, style: styles.input }}
+        ></CustomTextInput>
         <Pressable
           onPress={() => {
             postsList.startFetching((page: number, endPage: Date) =>
@@ -112,10 +115,14 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     paddingRight: 20,
   },
+  inputContainer: {
+    flex: 14,
+    justifyContent: "center",
+    paddingRight: 20,
+  },
   input: {
     height: 40,
     fontSize: 15,
-    flex: 14,
   },
   icon: {
     flex: 1,

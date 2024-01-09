@@ -7,18 +7,32 @@ import WhiteText from "../../../components/WhiteText";
 import { router } from "expo-router";
 
 export default function SignUp() {
-  const displayName = useCustomTextInput({ uiName: "display name" });
-  const username = useCustomTextInput({ uiName: "username" });
-  const password = useCustomTextInput({ uiName: "password", isPassword: true });
+  const displayName = useCustomTextInput({
+    uiName: "display name",
+    checkEmptiness: true,
+  });
+  const username = useCustomTextInput({
+    uiName: "username",
+    checkEmptiness: true,
+  });
+  const password = useCustomTextInput({
+    uiName: "password",
+    isPassword: true,
+    checkEmptiness: true,
+    minLength: 8,
+  });
   const rePassword = useCustomTextInput({
     uiName: "repeat password",
     isPassword: true,
+    checkEmptiness: true,
+    minLength: 8,
   });
 
   const [formError, setFormError] = useState<null | string>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async () => {
+    setFormError(null);
     setIsLoading(true);
 
     let doesPass = true;
@@ -31,15 +45,19 @@ export default function SignUp() {
       return;
     }
 
+    if (password.props.value.trim() !== rePassword.props.value.trim()) {
+      setFormError("Passwords do not match.");
+      return;
+    }
+
     const res = await signUpRequest({
-      displayName: displayName.props.value,
-      username: username.props.value,
-      password: password.props.value,
-      rePassword: rePassword.props.value,
+      displayName: displayName.props.value.trim(),
+      username: username.props.value.trim(),
+      password: password.props.value.trim(),
+      rePassword: rePassword.props.value.trim(),
     });
 
     if (res.status) {
-      setFormError(null);
       router.replace("/auth/signIn");
       ToastAndroid.show("Successfully signed up.", 200);
     } else {
@@ -51,19 +69,29 @@ export default function SignUp() {
 
   return (
     <View style={styles.main}>
-      <CustomTextInput style={styles.box} {...displayName}></CustomTextInput>
-      <CustomTextInput style={styles.box} {...username}></CustomTextInput>
-      <CustomTextInput style={styles.box} {...password}></CustomTextInput>
-      <CustomTextInput style={styles.box} {...rePassword}></CustomTextInput>
-      {formError !== null && <WhiteText>{formError}</WhiteText>}
+      <View style={styles.form}>
+        <CustomTextInput
+          inputProps={{ ...displayName, style: styles.box }}
+        ></CustomTextInput>
+        <CustomTextInput
+          inputProps={{ ...username, style: styles.box }}
+        ></CustomTextInput>
+        <CustomTextInput
+          inputProps={{ ...password, style: styles.box }}
+        ></CustomTextInput>
+        <CustomTextInput
+          inputProps={{ ...rePassword, style: styles.box }}
+        ></CustomTextInput>
+        {formError !== null && <WhiteText>{formError}</WhiteText>}
 
-      <Pressable
-        style={[styles.box, styles.button]}
-        onPress={handleSubmit}
-        disabled={isLoading}
-      >
-        <Text> SIGN UP</Text>
-      </Pressable>
+        <Pressable
+          style={[styles.box, styles.button]}
+          onPress={handleSubmit}
+          disabled={isLoading}
+        >
+          <Text> SIGN UP</Text>
+        </Pressable>
+      </View>
     </View>
   );
 }
@@ -74,7 +102,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  form: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
     gap: 15,
+    width: 250,
   },
   box: {
     width: 250,

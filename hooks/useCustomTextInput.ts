@@ -5,11 +5,17 @@ export default function useCustomTextInput({
   isPassword = false,
   placeholder,
   limit,
+  multiline = false,
+  checkEmptiness = false,
+  minLength = 0,
 }: {
   uiName: string;
   isPassword?: boolean;
   placeholder?: string;
   limit?: number;
+  multiline?: boolean;
+  checkEmptiness?: boolean;
+  minLength?: number;
 }) {
   const [value, setValue] = useState("");
   const [errorMessage, setErrorMessage] = useState<null | string>(null);
@@ -21,17 +27,23 @@ export default function useCustomTextInput({
       onChangeText: setValue,
       secureTextEntry: isPassword,
       maxLength: limit,
+      multiline,
     },
     errorMessage,
     setValue,
     validate: () => {
+      setValue(value.trim());
       setErrorMessage(null);
-      return checkEmptiness(value, uiName, setErrorMessage);
+      if (checkEmptiness && !isEmpty(value.trim(), uiName, setErrorMessage))
+        return false;
+      if (!isLengthEnough(value.trim(), uiName, setErrorMessage, minLength))
+        return false;
+      return true;
     },
   };
 }
 
-function checkEmptiness(
+function isEmpty(
   value: string,
   uiName: string,
   setErrorMessage: React.Dispatch<React.SetStateAction<string | null>>
@@ -40,7 +52,24 @@ function checkEmptiness(
     return true;
   }
   setErrorMessage(
-    uiName[0].toLocaleUpperCase() + uiName.slice(1) + " cannot be empty."
+    `${uiName[0].toLocaleUpperCase() + uiName.slice(1)} cannot be empty.`
+  );
+  return false;
+}
+
+function isLengthEnough(
+  value: string,
+  uiName: string,
+  setErrorMessage: React.Dispatch<React.SetStateAction<string | null>>,
+  minLength: number
+) {
+  if (value.length >= minLength) {
+    return true;
+  }
+  setErrorMessage(
+    `${
+      uiName[0].toLocaleUpperCase() + uiName.slice(1)
+    } cannot be smaller then ${minLength}.`
   );
   return false;
 }

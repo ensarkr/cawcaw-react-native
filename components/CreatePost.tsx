@@ -23,6 +23,7 @@ export default function CreatePost({
     uiName: "post",
     limit: 250,
     placeholder: "Click to write your post.",
+    multiline: true,
   });
   const [image, setImage] = useState<
     (DocumentPicker.DocumentPickerAsset & { aspectRatio: number }) | null
@@ -87,7 +88,7 @@ export default function CreatePost({
   return (
     <>
       <View style={[styles.view, isUploading ? { opacity: 0.5 } : {}]}>
-        <CustomTextInput {...postText}></CustomTextInput>
+        <CustomTextInput inputProps={postText}></CustomTextInput>
         {image !== null && (
           <Image
             source={{

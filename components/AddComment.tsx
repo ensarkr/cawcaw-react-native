@@ -23,6 +23,7 @@ export default function AddComment({
     uiName: "comment",
     placeholder: "Click to write your comment",
     limit: 150,
+    multiline: true,
   });
   const [isUploading, setIsUploading] = useState(false);
 
@@ -56,7 +57,7 @@ export default function AddComment({
   return (
     <>
       <View style={[styles.view, isUploading ? { opacity: 0.5 } : {}]}>
-        <CustomTextInput {...comment}></CustomTextInput>
+        <CustomTextInput inputProps={comment}></CustomTextInput>
 
         <View style={styles.infoView}>
           <WhiteText style={styles.fade}>

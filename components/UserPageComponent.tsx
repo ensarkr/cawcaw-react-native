@@ -52,6 +52,7 @@ export default function UserPageComponent({
     if (!res.status) {
       router.back();
       ToastAndroid.show(res.message, 200);
+      if (type === "user") auth.signOut();
       return;
     }
 

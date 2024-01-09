@@ -8,8 +8,15 @@ import { router } from "expo-router";
 import WhiteText from "../../../components/WhiteText";
 
 export default function SignIn() {
-  const username = useCustomTextInput({ uiName: "username" });
-  const password = useCustomTextInput({ uiName: "password", isPassword: true });
+  const username = useCustomTextInput({
+    uiName: "username",
+    checkEmptiness: true,
+  });
+  const password = useCustomTextInput({
+    uiName: "password",
+    isPassword: true,
+    checkEmptiness: true,
+  });
 
   const [formError, setFormError] = useState<null | string>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -30,8 +37,8 @@ export default function SignIn() {
     }
 
     const res = await signInRequest({
-      username: username.props.value,
-      password: password.props.value,
+      username: username.props.value.trim(),
+      password: password.props.value.trim(),
     });
 
     if (res.status) {
@@ -50,11 +57,11 @@ export default function SignIn() {
     <View style={styles.main}>
       <Text>Sign in</Text>
       <CustomTextInput
-        {...username}
-        multiline={false}
-        style={styles.box}
+        inputProps={{ ...username, style: styles.box }}
       ></CustomTextInput>
-      <CustomTextInput {...password} style={styles.box}></CustomTextInput>
+      <CustomTextInput
+        inputProps={{ ...password, style: styles.box }}
+      ></CustomTextInput>
       {formError !== null && <WhiteText>{formError}</WhiteText>}
       <Pressable
         style={[styles.box, styles.button]}
