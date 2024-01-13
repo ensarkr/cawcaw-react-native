@@ -26,6 +26,7 @@ export default function StackLayout() {
               headerTitleStyle: { color: "white" },
               headerTintColor: "white",
             }}
+            getId={({ params }) => (params as any).postId}
           ></Stack.Screen>
           <Stack.Screen
             name="user/[userId]"
@@ -35,6 +36,7 @@ export default function StackLayout() {
               headerTitleStyle: { color: "white" },
               headerTintColor: "white",
             }}
+            getId={({ params }) => (params as any).userId}
           ></Stack.Screen>
           <Stack.Screen
             name="auth/signIn/index"

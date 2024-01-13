@@ -74,7 +74,7 @@ export default function UserPageComponent({
           <View style={styles.topView}>
             <View style={styles.leftPart}>
               <View>
-                <WhiteText> {userData.displayName}</WhiteText>
+                <WhiteText>{userData.displayName}</WhiteText>
                 <WhiteText style={styles.fade}>@{userData.username}</WhiteText>
               </View>
               <FollowPart
